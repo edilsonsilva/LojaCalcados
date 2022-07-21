@@ -1,6 +1,7 @@
 package br.com.lojacalcados.dao;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class DAOEndereco extends Conexao implements ICR<Endereco>{
 		try {
 			if(abrirBanco()) {
 				String query = "Insert Into endereco(tipo,logradouro,numero,complemento,cep,bairro,cidade,estado)values(?,?,?,?,?,?,?,?)";
-				pst = cx.prepareStatement(query);
+				pst = cx.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
 				
 				pst.setString(1, obj.getTipo());
 				pst.setString(2, obj.getLogradouro());
@@ -29,9 +30,14 @@ public class DAOEndereco extends Conexao implements ICR<Endereco>{
 						
 				
 				//Executar o cadastro no banco
-				int rs = pst.executeUpdate();
-				if(rs>0)
-					msg ="Dados cadastrados";
+				int r = pst.executeUpdate();
+				rs = pst.getGeneratedKeys();
+				if(r>0) {
+					if(rs.next()) {
+						msg =String.valueOf(rs.getLong(1));
+					}
+				}
+					
 				else 
 					msg = "Não foi possível cadastrar";				
 			}else {

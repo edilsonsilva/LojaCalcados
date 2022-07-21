@@ -2,6 +2,7 @@ package br.com.lojacalcados.dao;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class DAOContato extends Conexao implements ICRContato{
 		try {
 			if(abrirBanco()) {
 				String query = "Insert Into contato(telefoneresidencial, telefonecelular, telefonecomercial, email)values(?,?,?,?)";
-				pst = cx.prepareStatement(query);
+				pst = cx.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
 				
 				pst.setString(1, obj.getTelefoneResidencial());
 				pst.setString(2, obj.getTelefoneCelular());
@@ -26,9 +27,16 @@ public class DAOContato extends Conexao implements ICRContato{
 				
 				
 				//Executar o cadastro no banco
-				int rs = pst.executeUpdate();
-				if(rs>0)
-					msg ="Dados cadastrados";
+				int r = pst.executeUpdate();
+				rs = pst.getGeneratedKeys();
+				
+				if(r>0) {
+					if(rs.next()) {
+						msg =String.valueOf(rs.getLong(1));
+					}
+				}
+					
+				
 				else 
 					msg = "Não foi possível cadastrar";				
 			}else {

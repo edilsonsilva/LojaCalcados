@@ -33,7 +33,7 @@ public abstract class Conexao {
 			//Ao carregar a conexao com o banco de dados será
 			//necessário passar alguns dados ao drive, tais como
 			//usuario,senha e nome do banco de dados
-			cx = DriverManager.getConnection("jdbc:mysql://localhost:3306/calcadodb","root","");
+			cx = DriverManager.getConnection("jdbc:mysql://localhost:3306/calcadosdb","root","");
 		}
 		catch(ClassNotFoundException cnf) {
 			System.out.println("Erro ao estabelecer a conexão com o banco -> "+cnf.getMessage());

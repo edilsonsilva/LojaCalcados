@@ -1,6 +1,7 @@
 package br.com.lojacalcados.dao;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,16 +17,20 @@ public class DAOUsuario extends Conexao implements ICRUsuario {
 		try {
 			if(abrirBanco()) {
 				String query = "Insert Into usuario(nomeusuario,senha,nivelacesso)values(?,?,?)";
-				pst = cx.prepareStatement(query);
+				pst = cx.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
 				
 				pst.setString(1, obj.getNomeUsuario());
 				pst.setString(2, obj.getSenha());
 				pst.setString(3,obj.getNivelAcesso());				
 				
 				//Executar o cadastro no banco
-				int rs = pst.executeUpdate();
-				if(rs>0)
-					msg ="Dados cadastrados";
+				int r = pst.executeUpdate();
+				rs = pst.getGeneratedKeys();
+				if(r>0) {
+					if(rs.next()) {
+						msg =String.valueOf(rs.getLong(1));
+					}
+				}
 				else 
 					msg = "Não foi possível cadastrar";				
 			}else {
